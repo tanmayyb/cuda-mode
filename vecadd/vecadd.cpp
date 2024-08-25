@@ -15,16 +15,24 @@ std::vector<int> vecadd(
     return tmp;
 }
 
-int main(){
 
-    // ready the vector
-    int len_vec = 100000000;
+std::vector<std::vector<int>> generate_vectors()
+{
+    // ready the vectors
+    int len_vec = 134217728; // 2^27
     int seed = 0;
     std::srand(unsigned(seed));
     std::vector<int> u(len_vec);
     std::generate(u.begin(), u.end(), std::rand);
     std::vector<int> v = u;
+    return std::vector<std::vector<int>> {u,v};
+}
 
+
+int main(){
+    auto vectors = generate_vectors();
+    auto u = vectors[0];
+    auto v = vectors[1];
     int t = u.size();
 
     // perform and measure performance

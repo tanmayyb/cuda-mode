@@ -1,43 +1,56 @@
 #include <iostream>
 #include <vector>
 #include <cuda_runtime.h>
-#define N 10
+#include <chrono>
+
+#include <algorithm>
+#include <ctime>
 
 
-
-__global__ void vecadd(
-    // int* a, int* b, int* c
+__global__ void CUDAvecadd(
+    int * a,
+    int * b,
+    int * result,
+    int t
 ){
-
-    // helpful prints
-    // printf(
-    //     "Block index: blockIdx.x = %d, blockIdx.y = %d, blockIdx.z = %d\n",
-    //     blockIdx.x, blockIdx.y, blockIdx.z);
-    // printf(
-    //     "Block dim: blockDim.x = %d, blockDim.y = %d, blockDim.z = %d\n",
-    //     blockDim.x, blockDim.y, blockDim.z);
-
-
-
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i<t){
+        result[i] = a[i] + b[i];
+    }
 }
 
 
+std::vector<std::vector<int>> generate_vectors(){
+    // ready the vectors
+    int len_vec = 134217728; // 2^27
+    int seed = 0;
+    std::srand(unsigned(seed));
+    std::vector<int> u(len_vec);
+    std::generate(u.begin(), u.end(), std::rand);
+    std::vector<int> v = u;
+    return std::vector<std::vector<int>> {u,v};
+}
+
 
 int main(){
+    auto vectors = generate_vectors();
+    int* u = vectors[0].data();
+    int* v = vectors[1].data();
+    int t = vectors[0].size();
+    size_t t_ = t * sizeof(int);
 
-
-    std::vector<int> u = {1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,};
-    std::vector<int> v = {1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,};
-
-    // std::cout<<u.size();
-
-    int n = u.size();
-
-    nblocks = 
-    nthread = 
-
-    // vecadd<<<1,1>>>();
-    // cudaDeviceSynchronize();
+    int nthreads = 256;
+    int nblocks = t/nthreads;
+    // // perform and measure performance
+    auto start = std::chrono::high_resolution_clock::now();
+    // std::vector<int> result(t);
+    int* result;
+    cudaMalloc(&result, t_);
+    CUDAvecadd<<<nblocks, nthreads>>>(u, v, result, t);
+    cudaDeviceSynchronize();
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+    std::cout << "Function execution time: " << duration.count() << " seconds" << std::endl;
 
     return 0;
 }
