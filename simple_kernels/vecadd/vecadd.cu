@@ -2,9 +2,8 @@
 #include <vector>
 #include <cuda_runtime.h>
 #include <chrono>
-
-#include <algorithm>
 #include <ctime>
+#include <algorithm>
 
 
 __global__ void CUDAvecadd(
