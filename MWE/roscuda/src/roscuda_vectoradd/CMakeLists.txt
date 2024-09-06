@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(roscuda_vectoradd)
 
+# CUDA CUSTOM CONFIGS
+set(CMAKE_C_COMPILER "/usr/lib/nvidia-cuda-toolkit/bin/gcc" CACHE PATH "" FORCE)
+set(CMAKE_CXX_COMPILER "/usr/lib/nvidia-cuda-toolkit/bin/g++" CACHE PATH "" FORCE)
+
+
 ## USER: Search CUSTOM CONFIGS to find pkg specific configs
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -13,6 +18,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
 )
+
+## CUDA CUSTOM CONFIGS
+set(CUDA_DIR "/usr/lib/nvidia-cuda-toolkit")
+find_package(CUDA REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -75,10 +84,12 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## CUDA CUSTOM CONFIGS
-SET(CUDA_NVCC_FLAGS "-arch=native" CACHE STRING "nvcc flags" FORCE)
+# SET(CMAKE_C_COMPILER "/usr/bin/gcc-8")
+# SET(DCMAKE_CUDA_COMPILER "/usr/lib/nvidia-cuda-toolkit/bin" CACHE STRING "Default NVCC options" FORCE)
+SET(CUDA_NVCC_FLAGS "-arch=sm_75" CACHE STRING "nvcc flags" FORCE)
 SET (CUDA_VERBOSE_BUILD ON CACHE BOOL "nvcc verbose" FORCE)
 SET(LIB_TYPE STATIC) 
-CUDA_ADD_LIBRARY(TestLib ${LIB_TYPE} src/vectoradd.cu)
+cuda_add_library(TestLib ${LIB_TYPE} src/vectoradd.cu)
 
 
 ################################################
