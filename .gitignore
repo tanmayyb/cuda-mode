@@ -4,3 +4,8 @@
 **devel/
 **logs/
 **catkin_tools/
+
+**CMakeFiles
+**.cmake
+**Makefile
+**CMakeCache.txt

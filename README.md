@@ -2,7 +2,7 @@
 
 
 
-https://stackoverflow.com/questions/448457/how-to-use-multiple-versions-of-gcc
+- https://docs.nvidia.com/cuda/cuda-runtime-api/index.html
 
 
 1. CUDA+ROS:
@@ -21,3 +21,17 @@ https://stackoverflow.com/questions/448457/how-to-use-multiple-versions-of-gcc
         ```
         catkin build
         ```
+
+
+2. Eigen+CUDA:
+    
+    https://github.com/GPMueller/eigen-cuda
+    1. edit CMakeLists.txt
+    2. to create Makefile run:
+    ```
+    cmake .
+    ```
+    3. to compile program run:
+    ```
+    make
+    ```
