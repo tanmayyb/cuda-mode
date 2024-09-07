@@ -4,6 +4,7 @@ set( EXECUTABLE_NAME main.out)
 
 set(CMAKE_C_COMPILER "/usr/lib/nvidia-cuda-toolkit/bin/gcc" CACHE PATH "" FORCE)
 set(CMAKE_CXX_COMPILER "/usr/lib/nvidia-cuda-toolkit/bin/g++" CACHE PATH "" FORCE)
+SET(CUDA_NVCC_FLAGS "--expt-relaxed-constexpr" CACHE STRING "nvcc flags" FORCE)
 
 MESSAGE( STATUS ">> CMAKE_C_COMPILER:        " ${CMAKE_C_COMPILER} )
 MESSAGE( STATUS ">> CMAKE_CXX_COMPILER:      " ${CMAKE_CXX_COMPILER} )
@@ -22,6 +23,7 @@ set(SOURCE_FILES
     src/kernel.cu    
     src/main.cpp
 )
+
 
 include_directories( PUBLIC ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/thirdparty)
 cuda_add_executable( ${EXECUTABLE_NAME} ${SOURCE_FILES} )
