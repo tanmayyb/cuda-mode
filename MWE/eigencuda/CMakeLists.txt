@@ -16,11 +16,11 @@ add_definitions(-DUSE_CUDA)
 
 
 set(HEADER_FILES
-    include/kernel.hpp
+    include/dot.hpp
 )
 
 set(SOURCE_FILES
-    src/kernel.cu    
+    src/dot.cu    
     src/main.cpp
 )
 
