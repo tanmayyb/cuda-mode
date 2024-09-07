@@ -11,7 +11,6 @@ MESSAGE( STATUS ">> CMAKE_CXX_COMPILER:      " ${CMAKE_CXX_COMPILER} )
 set( EXECUTABLE_NAME main.out )
 
 
-
 ### Find includes in corresponding build directories
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 ######### Have the binary placed into the source head
@@ -48,6 +47,8 @@ set(SOURCE_FILES
 #     include/test.hpp
 #     include/kernel.hpp
 # )
+find_package(Eigen3 REQUIRED)
+# link_directories(${Eigen_INCLUDE_DIRS})
 
 
 if (CORE_USE_CUDA)
@@ -58,6 +59,7 @@ else()
 endif()
 
 target_link_libraries( ${EXECUTABLE_NAME} ${CUDA_LIBRARIES})
+target_link_libraries( ${EXECUTABLE_NAME} Eigen3::Eigen)
 
 target_include_directories( ${EXECUTABLE_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories( ${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/thirdparty)
