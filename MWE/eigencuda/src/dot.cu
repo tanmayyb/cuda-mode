@@ -16,7 +16,7 @@ inline void HandleError(cudaError_t err, const char *file, int line) {
 }
 #define HANDLE_ERROR( err ) (HandleError( err, __FILE__, __LINE__ ))
 
-__global__ void CUDAvecadd(
+__global__ void CUDAvecdot(
   Eigen::Vector3f *v1,
   Eigen::Vector3f *v2,
   float *out,
@@ -28,7 +28,7 @@ __global__ void CUDAvecadd(
 }
 
 
-std::vector<float> launch_vecadd(
+std::vector<float> launch_vecdot(
   std::vector<Eigen::Vector3f> &v1, 
   std::vector<Eigen::Vector3f> &v2
 ){
@@ -46,7 +46,7 @@ std::vector<float> launch_vecadd(
   HANDLE_ERROR(cudaMemcpy(d_v1, v1.data(), sizeof(Eigen::Vector3f)*size, cudaMemcpyHostToDevice));
   HANDLE_ERROR(cudaMemcpy(d_v2, v2.data(), sizeof(Eigen::Vector3f)*size, cudaMemcpyHostToDevice));
 
-  CUDAvecadd<<<size/THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(d_v1, d_v2, d_ret, size);
+  CUDAvecdot<<<size/THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(d_v1, d_v2, d_ret, size);
   cudaDeviceSynchronize();
   
   HANDLE_ERROR(cudaMemcpy(ret, d_ret, sizeof(float)*size, cudaMemcpyDeviceToHost));

@@ -10,8 +10,8 @@
 std::vector<std::vector<Eigen::Vector3f>> generate_vectors()
 {
   // ready the vectors
-  // int len_vec = 134217728; // 2^27
-  int len_vec = 4000;
+  int len_vec = 134217728; // 2^27
+  // int len_vec = 4000;
   // int len_vec = 256; 
   std::vector<Eigen::Vector3f> v1(len_vec, Eigen::Vector3f {1.0,1.0,1.0});
   auto v2 = v1;
@@ -23,7 +23,7 @@ int main(){
   std::cout<<"Code Runs! with Eigen!"<<std::endl;
 
   auto start = std::chrono::high_resolution_clock::now();
-  auto output = launch_vecadd(vectors[0], vectors[1]);
+  auto output = launch_vecdot(vectors[0], vectors[1]);
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> duration = end - start;
   std::cout << "Function execution time: " << duration.count() << " seconds" << std::endl;    
