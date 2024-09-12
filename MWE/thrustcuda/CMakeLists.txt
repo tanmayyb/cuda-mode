@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(cublascuda)
+project(thrustcuda)
 set( EXECUTABLE_NAME main.out)
 
 set(CMAKE_C_COMPILER "/usr/lib/nvidia-cuda-toolkit/bin/gcc" CACHE PATH "" FORCE)
@@ -32,4 +32,3 @@ target_link_libraries( ${EXECUTABLE_NAME} ${CUDA_LIBRARIES})
 
 target_include_directories( ${EXECUTABLE_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories( ${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/thirdparty)
-
