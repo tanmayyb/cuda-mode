@@ -9,36 +9,78 @@
 
 #define THREADS_PER_BLOCK 256
 
-struct dot_product_functor {
-  __host__ __device__ float operator()(const Vector3& obj) const {
-    return  obj.getX() * obj.getX() +
-            obj.getY() * obj.getY() +
-            obj.getZ() * obj.getZ();
+// struct Vector3fDotProduct {
+//   __host__ __device__ float operator()(
+//     const Vector3f& a, 
+//     const Vector3f& b
+//   ) const {
+//     return  a.getX() * b.getX() + 
+//             a.getY() * b.getY() + 
+//             a.getZ() * b.getZ();
+//   }
+// };
+
+struct Vector3fDotProduct {
+  __host__ __device__ float operator()(
+    // const Vector3f& a, 
+    // const Vector3f& b
+    const thrust::tuple<Vector3f, Vector3f>& t
+  ) const {
+
+    auto a = thrust::get<0>(t);
+    auto b = thrust::get<1>(t);
+    return  a.getX() * b.getX() + 
+            a.getY() * b.getY() + 
+            a.getZ() * b.getZ();
   }
 };
 
 
 
-float launch_vecdot(
-  std::vector<Vector3> *h_v1, 
-  std::vector<Vector3> *h_v2
-){
+float computeDotProductThrust(
+  const std::vector<Vector3f>& h_vec1, 
+  const std::vector<Vector3f>& h_vec2
+) {
+  int n = h_vec1.size();
 
-  // int size = (*h_v1).size();
-  // float *h_ret = new float[size];
-  // float *d_v1, *d_v2;
-  // float *d_ret;
+  // Create thrust::device_vector from std::vector
+  thrust::device_vector<Vector3f> d_vec1(h_vec1.begin(), h_vec1.end());
+  thrust::device_vector<Vector3f> d_vec2(h_vec2.begin(), h_vec2.end());
 
-  thrust::device_vector<Vector3> d_objects = *h_v1;
-  
-  float total_dot_product = thrust::transform_reduce(
-      d_objects.begin(), d_objects.end(),
-      dot_product_functor(), // Functor to compute dot product for each object
-      0.0f,                  // Initial value for the reduction
-      thrust::plus<float>()   // Binary operation to sum results
+  // // Use thrust::transform_reduce to compute dot product
+  // float result = thrust::transform_reduce(
+  //   d_vec1.begin(), 
+  //   d_vec1.end(), 
+  //   // d_vec2.begin(),               
+  //   Vector3fDotProduct(),         
+  //   0.0f,                         
+  //   thrust::plus<float>()         
+  // );
+
+  auto first = thrust::make_zip_iterator(thrust::make_tuple(d_vec1.begin(), d_vec2.begin()));
+  auto last = thrust::make_zip_iterator(thrust::make_tuple(d_vec1.end(), d_vec2.end()));
+
+  float result = thrust::transform_reduce(
+    first,
+    last,
+    Vector3fDotProduct(),
+    0.0f,
+    thrust::plus<float>()
   );
 
-  // std::vector<float> ret;
+  return result;
+}
+
+
+float launch_vecdot(
+  std::vector<Vector3f> *h_vec1, 
+  std::vector<Vector3f> *h_vec2
+){
+
+  // Calculate dot product using Thrust
+  float total_dot_product = computeDotProductThrust(*h_vec1, *h_vec2);
+
+  std::cout << "Dot Product (Thrust): " << total_dot_product << std::endl;
   return total_dot_product;
 }
 
