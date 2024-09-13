@@ -9,21 +9,8 @@
 
 #define THREADS_PER_BLOCK 256
 
-// struct Vector3fDotProduct {
-//   __host__ __device__ float operator()(
-//     const Vector3f& a, 
-//     const Vector3f& b
-//   ) const {
-//     return  a.getX() * b.getX() + 
-//             a.getY() * b.getY() + 
-//             a.getZ() * b.getZ();
-//   }
-// };
-
 struct Vector3fDotProduct {
   __host__ __device__ float operator()(
-    // const Vector3f& a, 
-    // const Vector3f& b
     const thrust::tuple<Vector3f, Vector3f>& t
   ) const {
 
@@ -36,7 +23,6 @@ struct Vector3fDotProduct {
 };
 
 
-
 float computeDotProductThrust(
   const std::vector<Vector3f>& h_vec1, 
   const std::vector<Vector3f>& h_vec2
@@ -46,16 +32,6 @@ float computeDotProductThrust(
   // Create thrust::device_vector from std::vector
   thrust::device_vector<Vector3f> d_vec1(h_vec1.begin(), h_vec1.end());
   thrust::device_vector<Vector3f> d_vec2(h_vec2.begin(), h_vec2.end());
-
-  // // Use thrust::transform_reduce to compute dot product
-  // float result = thrust::transform_reduce(
-  //   d_vec1.begin(), 
-  //   d_vec1.end(), 
-  //   // d_vec2.begin(),               
-  //   Vector3fDotProduct(),         
-  //   0.0f,                         
-  //   thrust::plus<float>()         
-  // );
 
   auto first = thrust::make_zip_iterator(thrust::make_tuple(d_vec1.begin(), d_vec2.begin()));
   auto last = thrust::make_zip_iterator(thrust::make_tuple(d_vec1.end(), d_vec2.end()));
@@ -67,7 +43,6 @@ float computeDotProductThrust(
     0.0f,
     thrust::plus<float>()
   );
-
   return result;
 }
 
